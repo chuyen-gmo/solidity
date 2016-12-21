@@ -11,22 +11,12 @@ contract DataObject_v0 is VersionContract, DataObject {
         logic_v0 = _logic;
     }
 
-    function create(bytes32 _id, address _owner, bytes32 _hash) returns (bool) {
-        return logic_v0.create(msg.sender, _id, _owner, _hash);
+    function create(bytes32 _id, address _owner, bytes32 _hash, address _cns, bytes32 _contractName) {
+        logic_v0.create(msg.sender, _id, _owner, _hash, _cns, _contractName);
     }
 
-    function createWithReaderWriterGroup(
-        bytes32 _id,
-        address _owner,
-        bytes32 _hash,
-        bytes32 _readerId,
-        bytes32 _writerId
-    ) returns (bool) {
-        return logic_v0.createWithReaderWriterGroup(msg.sender, _id, _owner, _hash, _readerId, _writerId);
-    }
-
-    function setHashByWriter(bytes32 _id, bytes32 _hash) {
-        logic_v0.setHashByWriter(msg.sender, _id, _hash);
+    function setHashByWriter(address _writer, bytes32 _id, bytes32 _hash) {
+        logic_v0.setHashByWriter(msg.sender, _writer, _id, _hash);
     }
 
     function setHashByProvider(bytes32 _id, bytes32 _hash) {
@@ -53,11 +43,15 @@ contract DataObject_v0 is VersionContract, DataObject {
         return logic_v0.getWriterId(_id);
     }
 
-    function isReader(address _sender, bytes32 _id) constant returns (bool) {
-        return logic_v0.isReader(_sender, _id);
+    function setReaderId(bytes32 _id, bytes32 _readerId) {
+        logic_v0.setReaderId(msg.sender, _id, _readerId);
     }
 
-    function isWriter(address _sender, bytes32 _id) constant returns (bool) {
-        return logic_v0.isWriter(_sender, _id);
+    function setWriterId(bytes32 _id, bytes32 _writerId) {
+        logic_v0.setWriterId(msg.sender, _id, _writerId);
+    }
+
+    function setAllowCnsContract(bytes32 _id, address _cns, bytes32 _contractName) {
+        logic_v0.setAllowCnsContract(msg.sender, _id, _cns, _contractName);
     }
 }
