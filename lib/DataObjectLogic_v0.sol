@@ -39,14 +39,15 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
         hashes[2] = _hash;
         AddressGroup_v0 addressGroup = AddressGroup_v0(cns.getLatestContract(ADDRESS_GROUP_CONTRACT_NAME));
 
-        bytes32 readerId = sha3(_id);
-        bytes32 writerId = sha3(readerId);
+        bytes32 readerId = Utils.transferUniqueId(_id);
+        bytes32 writerId = Utils.transferUniqueId(readerId);
         if (!addressGroup.create(readerId, this, BLANK_ADDRESS_ARRAY)) throw;
         if (!addressGroup.create(writerId, this, BLANK_ADDRESS_ARRAY)) throw;
         addressGroup.setAllowCnsContract(readerId, _cns, _contractName);
         addressGroup.setAllowCnsContract(writerId, _cns, _contractName);
         if (!field_v0.create(_id, _sender, _owner, hashes, readerId, writerId)) throw;
         field_v0.setAllowCnsContract(_id, _cns, _contractName, true);
+        event_v0.create(_sender, _id);
     }
 
     function setAllowCnsContract(address _sender, bytes32 _id, address _cns, bytes32 _contractName) onlyByVersionContractOrLogic onlyFromOwnerOrAllowCnsContractLogic(_sender, _id) returns (bool) {
@@ -69,11 +70,11 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
 
     function setHash(address _sender, bytes32 _id, bytes32 _hash, uint _targetIdx, uint _compareIdx) private {
         field_v0.setHash(_id, _targetIdx, _hash);
-        event_v0.setHashEvent(_sender, _id, _targetIdx, _hash);
+        event_v0.setHash(_sender, _id, _targetIdx, _hash);
 
         if (_hash == field_v0.getHash(_id, _compareIdx)) {
             field_v0.setHash(_id, 0, _hash);
-            event_v0.setHashEvent(_sender, _id, 0, _hash);
+            event_v0.setHash(_sender, _id, 0, _hash);
         }
     }
 
