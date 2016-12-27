@@ -25,14 +25,14 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
     }
 
     modifier onlyFromWriter(address _sender, bytes32 _id) {
-        if (!isWriter(_sender, _id)) throw; _;
-    }
-
-    modifier onlyFromReader(address _sender, bytes32 _id) {
-        if (!isReader(_sender, _id)) throw; _;
+        if (!isWriter(_id, _sender)) throw; _;
     }
 
     modifier onlyFromCreator(address _sender, bytes32 _id) { if (field_v0.getCreator(_id) != _sender) throw; _; }
+
+    function exist(bytes32 _id) onlyByVersionContractOrLogic constant returns (bool) {
+        return field_v0.exist(_id);
+    }
 
     function create(address _sender, bytes32 _id, address _owner, bytes32 _hash, address _cns, bytes32 _contractName) onlyByVersionContractOrLogic {
         bytes32[3] memory hashes;
@@ -53,6 +53,12 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
     function setAllowCnsContract(address _sender, bytes32 _id, address _cns, bytes32 _contractName) onlyByVersionContractOrLogic onlyFromOwnerOrAllowCnsContractLogic(_sender, _id) returns (bool) {
         if (field_v0.isAllowCnsContract(_id, _cns, _contractName)) return false;
         field_v0.setAllowCnsContract(_id, _cns, _contractName, true);
+        return true;
+    }
+
+    function removeAllowCnsContract(address _sender, bytes32 _id, address _cns, bytes32 _contractName) onlyByVersionContractOrLogic onlyFromOwnerOrAllowCnsContractLogic(_sender, _id) returns (bool) {
+        if (field_v0.isAllowCnsContract(_id, _cns, _contractName)) return false;
+        field_v0.setAllowCnsContract(_id, _cns, _contractName, false);
         return true;
     }
 
@@ -78,7 +84,7 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
         }
     }
 
-    function getHash(address _sender, bytes32 _id) onlyByVersionContractOrLogic onlyFromReader(_sender, _id) constant returns (bytes32) {
+    function getHash(bytes32 _id) onlyByVersionContractOrLogic constant returns (bytes32) {
         return field_v0.getHash(_id, 0);
     }
 
@@ -98,21 +104,18 @@ contract DataObjectLogic_v0 is VersionLogic, DataObject{
         field_v0.setWriterId(_id, _readerId);
     }
 
-    function isReader(address _sender, bytes32 _id) onlyByVersionContractOrLogic constant returns (bool) {
-        if (field_v0.getOwner(_id) == _sender) return true;
-        return isInAddressGroup(_sender, field_v0.getReaderId(_id));
+    function isReader(bytes32 _id, address _account) onlyByVersionContractOrLogic constant returns (bool) {
+        if (field_v0.getOwner(_id) == _account) return true;
+        return isInAddressGroup(field_v0.getReaderId(_id), _account);
     }
 
-    function isWriter(address _sender, bytes32 _id) onlyByVersionContractOrLogic constant returns (bool) {
-        if (field_v0.getOwner(_id) == _sender) return true;
-        return isInAddressGroup(_sender, field_v0.getWriterId(_id));
+    function isWriter(bytes32 _id, address _account) onlyByVersionContractOrLogic constant returns (bool) {
+        if (field_v0.getOwner(_id) == _account) return true;
+        return isInAddressGroup(field_v0.getWriterId(_id), _account);
     }
 
-    function isInAddressGroup(address _sender, bytes32 _groupId) private constant returns (bool) {
-        address addr = cns.getLatestContract(ADDRESS_GROUP_CONTRACT_NAME);
-        if (addr == 0) return false;
-        AddressGroup_v0 addressGroup = AddressGroup_v0(addr);
-        if (!addressGroup.isTargetAddress(_groupId, _sender)) return false;
-        return true;
+    function isInAddressGroup(bytes32 _groupId, address _account) private constant returns (bool) {
+        AddressGroup_v0 addressGroup = AddressGroup_v0(cns.getLatestContract(ADDRESS_GROUP_CONTRACT_NAME));
+        return addressGroup.isTargetAddress(_groupId, _account);
     }
 }
