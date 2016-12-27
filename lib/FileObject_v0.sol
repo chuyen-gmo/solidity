@@ -55,6 +55,10 @@ contract FileObject_v0 is VersionContract, FileObject {
         logic_v0.setAllowCnsContract(msg.sender, _id, _cns, _contractName);
     }
 
+    function removeAllowCnsContract(bytes32 _id, address _cns, bytes32 _contractName) {
+        logic_v0.removeAllowCnsContract(msg.sender, _id, _cns, _contractName);
+    }
+
     function getNameReaderId(bytes32 _id) constant returns (bytes32) {
         return logic_v0.getNameReaderId(_id);
     }

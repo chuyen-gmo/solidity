@@ -58,4 +58,8 @@ contract DataObject_v0 is VersionContract, DataObject {
     function setAllowCnsContract(bytes32 _id, address _cns, bytes32 _contractName) {
         logic_v0.setAllowCnsContract(msg.sender, _id, _cns, _contractName);
     }
+
+    function removeAllowCnsContract(bytes32 _id, address _cns, bytes32 _contractName) {
+        logic_v0.removeAllowCnsContract(msg.sender, _id, _cns, _contractName);
+    }
 }

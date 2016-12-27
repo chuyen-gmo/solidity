@@ -44,6 +44,12 @@ contract AddressGroupLogic_v0 is VersionLogic, AddressGroup {
         return true;
     }
 
+    function removeAllowCnsContract(address _sender, bytes32 _id, address _cns, bytes32 _contractName) onlyByVersionContractOrLogic onlyFromOwnerOrAllowCnsContractLogic(_sender, _id) returns (bool) {
+        if (field_v0.isAllowCnsContract(_id, _cns, _contractName)) return false;
+        field_v0.setAllowCnsContract(_id, _cns, _contractName, false);
+        return true;
+    }
+
     function addAddress(address _sender, bytes32 _id, address _targetAddr) onlyByVersionContractOrLogic onlyFromOwnerOrAllowCnsContractLogic(_sender, _id) returns (bool) {
         return setTargetAddress(_id, _targetAddr, true);
     }

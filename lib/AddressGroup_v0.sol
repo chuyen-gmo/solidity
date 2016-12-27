@@ -27,13 +27,17 @@ contract AddressGroup_v0 is VersionContract, AddressGroup {
         logic_v0.setAllowCnsContract(msg.sender, _id, _cns, _contractName);
     }
 
+    function removeAllowCnsContract(bytes32 _id, address _cns, bytes32 _contractName) {
+        logic_v0.removeAllowCnsContract(msg.sender, _id, _cns, _contractName);
+    }
+
     function isTargetAddress(bytes32 _id, address _addr) constant returns (bool) {
         return logic_v0.isTargetAddress(_id, _addr);
     }
 
     function appendChild(bytes32 _id, bytes32 _childId) {
         logic_v0.appendChild(msg.sender, _id, _childId);
-    }    
+    }
 
     function removeChild(bytes32 _id, bytes32 _childId) {
         logic_v0.removeChild(msg.sender, _id, _childId);
