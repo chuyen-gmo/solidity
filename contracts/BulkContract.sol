@@ -1,29 +1,26 @@
 pragma solidity ^0.4.2;
 
-import "./DataObject_v0.sol";
+import "./DataObject_v1.sol";
 
 contract BulkContract {
-    bytes32 constant DATA_OBJECT_CONTRACT_NAME = bytes32('DataObject');
-    ContractNameService cns;
+    DataObject_v1 dataObject_v1;
 
-    function BulkContract(ContractNameService _cns) {
-        cns = _cns;
+    function BulkContract(DataObject_v1 _dataObject) {
+        dataObject_v1 = _dataObject;
     }
 
     function getHashInDataObject(bytes32[] _ids) constant returns (bytes32[]) {
-        DataObject_v0 dataObject = DataObject_v0(cns.getLatestContract(DATA_OBJECT_CONTRACT_NAME));
         bytes32[] memory hashes = new bytes32[](_ids.length);
 
         for (uint i; i<_ids.length; i++) {
-            hashes[i] = dataObject.getHash(_ids[i]);
+            hashes[i] = dataObject_v1.getHash(_ids[i]);
         }
         return hashes;
     }
 
-    function isReaderInDataObject(bytes32[] _ids, address _account) constant returns (bool) {
-        DataObject_v0 dataObject = DataObject_v0(cns.getLatestContract(DATA_OBJECT_CONTRACT_NAME));
+    function canReadInDataObject(address _account, bytes32[] _ids) constant returns (bool) {
         for (uint i; i<_ids.length; i++) {
-            if (!dataObject.isReader(_ids[i], _account)) return false;
+            if (!dataObject_v1.canRead(_account, _ids[i])) return false;
         }
         return true;
     }

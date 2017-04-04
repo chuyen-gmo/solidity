@@ -1,3 +1,3 @@
 module.exports = function(deployer) {
-    deployer.deploy(BulkContract, ContractNameService.address);
+    deployer.deploy(BulkContract, DataObject_v1.address);
 };
