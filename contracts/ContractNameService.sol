@@ -30,7 +30,7 @@ contract ContractNameService {
     }
 
     function isVersionContract(address _sender, bytes32 _name) constant returns (bool) {
-        if (_sender == 0) false;
+        if (_sender == 0) return false;
         for (uint i = 0; i < contracts[_name].length; i++) {
             if (contracts[_name][i].main == _sender) return true;
         }
@@ -38,7 +38,7 @@ contract ContractNameService {
     }
 
     function isVersionLogic(address _sender, bytes32 _name) constant returns (bool) {
-        if (_sender == 0) false;
+        if (_sender == 0) return false;
         for (uint i = 0; i < contracts[_name].length; i++) {
             if (contracts[_name][i].logic == _sender) return true;
         }
